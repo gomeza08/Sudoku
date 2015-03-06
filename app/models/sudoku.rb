@@ -1,5 +1,5 @@
 class Sudoku
-  attr_accessor :boxes, :unsolved_rows, :unsolved_columns, :unsolved_squares, :possible_alternates, :choke_points
+  attr_accessor :boxes, :unsolved_rows, :unsolved_columns, :unsolved_squares, :possible_solutions
 
   def initialize(vals)
     raise ArgumentError.new('Sudokus have 27 boxes') unless vals.length != 27
@@ -35,9 +35,8 @@ class Sudoku
     @unsolved_rows = []
     @unsolved_columns = []
     @unsolved_squares = []
+    @possible_solutions = []
     @boxes = boxes
-    @possible_alternates = []
-    @choke_points = []
 
     checks = 1
     while checks < 10
@@ -73,22 +72,28 @@ class Sudoku
   def solve
     while unsolved
       unless is_valid_sudoku
-        if possible_alternates.size === 0
+        if @possible_solutions.size === 0
           break
         end
-        @boxes = possible_alternates.pop
+        current = @possible_solutions.pop
+        @boxes = current[:boxes]
+        @unsolved_rows = current[:unsolved_rows]
+        @unsolved_columns = current[:unsolved_columns]
+        @unsolved_squares = current[:unsolved_squares]
       end
       changes = check_rows+check_columns+check_squares
       if changes === 0
-        @choke_points.push(@boxes.inject([]) { |a,element| a << element.dup})
         key_box = @boxes.find{|box| box.possibilities.length === 2}
         key_box.possibilities.each {|possibility|
-          clone = @boxes.inject([]) { |a,element| a << element.dup}
+          clone = YAML::load(@boxes.to_yaml)
           clone_box = clone.find {|box| box.equals(key_box)}
           clone_box.set_value(possibility)
-          @possible_alternates.push(clone)
+          @possible_solutions.push({:boxes => clone,
+                                     :unsolved_rows => YAML::load(@unsolved_rows.to_yaml),
+                                     :unsolved_columns => YAML::load(@unsolved_columns.to_yaml),
+                                     :unsolved_squares => YAML::load(@unsolved_squares.to_yaml)})
         }
-        @boxes = possible_alternates.pop
+        @boxes = @possible_solutions.pop[:boxes]
       end
     end
   end
@@ -113,46 +118,82 @@ class Sudoku
 
   def check_row(row)
     changes = 0
+    total_possibilities = []
     get_row(row).each{|box1|
       unless box1.row_checked || !box1.has_value
         box1.row_checked = true
         get_row(row).each{|box2| box2.remove_possibility(box1.value)}
         changes += 1
       end
+      total_possibilities += box1.possibilities
     }
     if get_row(row).all? {|box| box.has_value}
       @unsolved_rows.delete(row)
     end
+    get_row(row).each{|box|
+      unless box.has_value
+        get_unique_possibilities(total_possibilities).each{|num|
+          if box.possibilities.include?(num)
+            box.set_value(num)
+            changes += 1
+          end
+        }
+      end
+    }
     changes
   end
 
   def check_column(col)
     changes = 0
+    total_possibilities = []
     get_column(col).each{|box1|
       unless box1.column_checked || !box1.has_value
         box1.column_checked = true
         get_column(col).each{ |box2| box2.remove_possibility(box1.value)}
         changes += 1
       end
+      total_possibilities += box1.possibilities
     }
     if get_column(col).all? {|box| box.has_value}
       @unsolved_columns.delete(col)
     end
+    get_column(col).each{|box|
+      unless box.has_value
+        get_unique_possibilities(total_possibilities).each{|num|
+          if box.possibilities.include?(num)
+            box.set_value(num)
+            changes += 1
+          end
+        }
+      end
+    }
     changes
   end
 
   def check_square(square)
     changes = 0
+    total_possibilities = []
     get_square(square).each{|box1|
       unless box1.square_checked || !box1.has_value
         box1.square_checked = true
         get_square(square).each{ |box2| box2.remove_possibility(box1.value)}
         changes += 1
       end
+      total_possibilities += box1.possibilities
     }
     if get_square(square).all? {|box| box.has_value}
       @unsolved_squares.delete(square)
     end
+    get_square(square).each{|box|
+      unless box.has_value
+        get_unique_possibilities(total_possibilities).each{|num|
+          if box.possibilities.include?(num)
+            box.set_value(num)
+            changes += 1
+          end
+        }
+      end
+    }
     changes
   end
 
@@ -187,5 +228,14 @@ class Sudoku
       end
     }
     true
+  end
+
+  def get_unique_possibilities(possibilities)
+    unique_possibilities = []
+    [*1..9].each{|num|
+      if possibilities.select{|num2| num2 === num}.length === 1
+        unique_possibilities.push(num)
+      end}
+    unique_possibilities
   end
 end

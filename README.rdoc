@@ -4,4 +4,4 @@ Changelog:
 
 3/5/15
 
-Implemented basic solving algorithm and started work on solving more advanced puzzles
+Implemented basic solving algorithm and added work to solve ambiguous puzzles

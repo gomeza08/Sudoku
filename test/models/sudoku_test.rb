@@ -62,7 +62,7 @@ class BoxTest < Test::Unit::TestCase
     assert_equal(true, !test_sudoku.get_square(1)[1].possibilities.include?(1))
   end
 
-  def test_solve
+  def test_solve_non_ambiguous
     test_sudoku = Sudoku.new([3,0,0,0,0,4,0,2,0,
                               1,4,0,0,9,0,3,0,7,
                               8,9,7,0,0,2,1,0,0,
@@ -76,7 +76,9 @@ class BoxTest < Test::Unit::TestCase
     test_sudoku.solve
     assert_equal(false, test_sudoku.unsolved)
     assert_equal(true, test_sudoku.is_valid_sudoku)
+  end
 
+  def test_solve_ambiguous
     test_sudoku = Sudoku.new([0,0,0,0,0,0,9,0,1,
                               0,9,0,0,0,5,0,8,0,
                               0,8,0,0,0,6,0,4,2,
