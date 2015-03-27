@@ -1,5 +1,5 @@
 class Sudoku
-  attr_accessor :boxes, :unsolved_rows, :unsolved_columns, :unsolved_squares, :possible_solutions
+  attr_accessor :boxes, :unsolved_rows, :unsolved_columns, :unsolved_squares, :possible_solutions, :initial
 
   def initialize(vals)
     if vals.kind_of?(String)
@@ -40,6 +40,7 @@ class Sudoku
     @unsolved_squares = []
     @possible_solutions = []
     @boxes = boxes
+    @initial = show_boxes
 
     checks = 1
     while checks < 10

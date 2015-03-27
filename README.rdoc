@@ -1,7 +1,24 @@
 Basic sudoku solver app
 
+API:
+
+Send a get request to /sudoku/solve?boxes=[arr], where arr is a comma separated list of numbers of exactly 81 digits.
+This represents the boxes of the sudoku, with the top left being the first number, working from right to left along the
+rows and ending in the bottom right. Unknown numbers are replaced with zeros. This call will return the initial puzzle
+and the solution as 81 digit long numerical strings representing the solution in the same form as described above
+
+EXAMPLE:
+/sudoku/solve?boxes=[0,0,0,0,0,0,9,0,1,0,9,0,0,0,5,0,8,0,0,8,0,0,0,6,0,4,2,6,0,4,0,0,2,0,0,0,9,0,0,0,0,0,0,0,4,0,0,0,5,0,0,8,0,6,7,3,0,4,0,0,0,9,0,0,4,0,3,0,0,0,1,0,1,0,5,0,0,0,0,0,0]
+
+{"solution":"527834961496215783381796542674182359958673124213549876732451698849367215165928437",
+ "initial" :"000000901090005080080006042604002000900000004000500806730400090040300010105000000"}
+
 Changelog:
 
 3/5/15
 
 Implemented basic solving algorithm and added work to solve ambiguous puzzles
+
+3/27/15
+
+Added API call

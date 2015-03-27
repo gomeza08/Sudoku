@@ -1,6 +1,8 @@
 class SudokuController < ApplicationController
 
   def solve
-    render json: Sudoku.new(params[:boxes]).solve.show_boxes
+    puzzle = Sudoku.new(params[:boxes])
+    puzzle.solve
+    render json: {:initial => puzzle.initial, :solution => puzzle.show_boxes}
   end
 end
