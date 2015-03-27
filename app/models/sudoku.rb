@@ -230,6 +230,10 @@ class Sudoku
     true
   end
 
+  def show_boxes
+    @boxes.each{ |box| box.print_val}
+  end
+
   def get_unique_possibilities(possibilities)
     unique_possibilities = []
     [*1..9].each{|num|

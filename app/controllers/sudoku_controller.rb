@@ -1,8 +1,6 @@
 class SudokuController < ApplicationController
 
-  attr_accessor :sudoku
-
-  def initialize(sudoku)
-    @sudoku = sudoku
+  def solve
+    Sudoku.new(params[:boxes])
   end
 end

@@ -1,8 +1,7 @@
-require_relative '../../../Sudoku/app/models/box'
-require 'test/unit'
-class BoxTest < Test::Unit::TestCase
+require File.dirname(__FILE__) + '/../test_helper'
+class BoxTest < ActiveSupport::TestCase
 
-  def test_init
+  test 'test init box' do
     test_box = Box.new(1,2,3,0)
     assert_equal(0 , test_box.value)
     assert_equal(9 , test_box.possibilities.length)
@@ -13,7 +12,7 @@ class BoxTest < Test::Unit::TestCase
     assert_equal(false , test_box.possibilities.include?(1))
   end
 
-  def test_remove_possibility
+  test 'test remove possibility' do
     test_box = Box.new(1,2,3,0)
 
     test_box.remove_possibility(1)
