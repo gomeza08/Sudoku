@@ -2,7 +2,10 @@ class Sudoku
   attr_accessor :boxes, :unsolved_rows, :unsolved_columns, :unsolved_squares, :possible_solutions
 
   def initialize(vals)
-    raise ArgumentError.new('Sudokus have 27 boxes') unless vals.length != 27
+    if vals.kind_of?(String)
+      vals = vals.split(',').map { |s| s.to_i }
+    end
+    raise ArgumentError.new('Sudokus have 81 boxes') if vals.length != 81
     boxes = []
     rows = 1
     while rows < 10
