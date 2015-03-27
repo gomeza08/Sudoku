@@ -99,6 +99,7 @@ class Sudoku
         @boxes = @possible_solutions.pop[:boxes]
       end
     end
+    self
   end
 
   def check_rows
@@ -234,7 +235,9 @@ class Sudoku
   end
 
   def show_boxes
-    @boxes.each{ |box| box.print_val}
+    solution_string = ''
+    @boxes.each{ |box| solution_string += box.value.to_s}
+    solution_string
   end
 
   def get_unique_possibilities(possibilities)
